@@ -123,6 +123,9 @@ public class WebSocket extends EventDispatcher {
     rawSocket.addEventListener(Event.CONNECT, onSocketConnect);
     rawSocket.addEventListener(IOErrorEvent.IO_ERROR, onSocketIoError);
     rawSocket.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onSocketSecurityError);
+  }
+
+  public function connect():void {
     rawSocket.connect(host, port);
   }
   
@@ -284,13 +287,18 @@ public class WebSocket extends EventDispatcher {
           "error communicating with Web Socket server at " + url +
           " (SecurityError: " + event.text + ")";
     }
-    onConnectionError(message);
+    onSecurityError(message);
   }
   
   private function onConnectionError(message:String):void {
     if (readyState == CLOSED) return;
     logger.error(message);
     close(STATUS_CONNECTION_ERROR);
+  }
+
+  private function onSecurityError(message:String):void {
+    this.dispatchEvent(new WebSocketEvent("securityError", message));
+    onConnectionError(message);
   }
 
   private function onSocketData(event:ProgressEvent):void {

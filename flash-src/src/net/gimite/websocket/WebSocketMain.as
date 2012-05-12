@@ -65,6 +65,10 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
     ExternalInterface.call("WebSocket.__error", encodeURIComponent("[WebSocket] " + message));
   }
   
+  public function securityError(message:String):void {
+    ExternalInterface.call("WebSocket.__securityError", message);
+  }
+
   private function parseEvent(event:WebSocketEvent):Object {
     var webSocket:WebSocket = event.target as WebSocket;
     var eventObj:Object = {};
@@ -101,7 +105,9 @@ public class WebSocketMain extends Sprite implements IWebSocketLogger{
     newSocket.addEventListener("open", onSocketEvent);
     newSocket.addEventListener("close", onSocketEvent);
     newSocket.addEventListener("error", onSocketEvent);
+    newSocket.addEventListener("securityError", onSocketEvent);
     newSocket.addEventListener("message", onSocketEvent);
+    newSocket.connect();
     webSockets[webSocketId] = newSocket;
   }
   

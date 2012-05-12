@@ -184,6 +184,10 @@
     } else if (flashEvent.type == "message") {
       var data = decodeURIComponent(flashEvent.message);
       jsEvent = this.__createMessageEvent("message", data);
+    } else if (flashEvent.type == "securityError") {
+      if (window.WEB_SOCKET_SECURITY_ERROR_CALLBACK)
+        window.WEB_SOCKET_SECURITY_ERROR_CALLBACK(this);
+      jsEvent = this.__createSimpleEvent("error");
     } else {
       throw "unknown event type: " + flashEvent.type;
     }
@@ -353,7 +357,7 @@
   WebSocket.__error = function(message) {
     logger.error(decodeURIComponent(message));
   };
-  
+
   WebSocket.__addTask = function(task) {
     if (WebSocket.__flash) {
       task();
